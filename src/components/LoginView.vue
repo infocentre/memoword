@@ -1,15 +1,9 @@
 <template>
   <div>
-    <facebook-login class="button" 
-    appId="693041211036132" 
-    @login="getUserData"
-    @sdk-loaded="sdkLoaded"
-    ></facebook-login>
-    <button @click="testBtn">hihi</button>
+   <button @click="fbLogin">페이스북 로그인</button>
   </div>
 </template>
 <script>
-import facebookLogin from 'facebook-login-vuejs'
 export default {
   data () {
     return {
@@ -17,6 +11,12 @@ export default {
     }
   },
   methods: {
+    fbLogin () {
+      let FB = this.$store.state.FB
+      FB.login(function (res) {
+        window.vm.$store.state.isConnected = true
+      })
+    },
     getUserData () {
       this.$store.state.FB.api('/me', 'get', {fields: 'id'}, uinfo => {
         this.$store.state.uid = uinfo.id
@@ -24,11 +24,7 @@ export default {
     },
     sdkLoaded (payload) {
       this.$store.commit('updateConnection', payload.isConnected)
-    },
-    testBtn () {
-      this.$store.commit('updateConnection', 'hi')
     }
-  },
-  components: {facebookLogin}
+  }
 }
 </script>

@@ -13,7 +13,6 @@
         <button @click="randomWord" class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">represh</button>
       </div>
     </div>
-    {{$store.state.FB}}
   </div>
 </template>
 

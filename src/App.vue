@@ -13,9 +13,7 @@
         <router-link class="mdl-navigation__link" to="/" @click.native="hideMenu">Home</router-link>
         <router-link class="mdl-navigation__link" to="/add" @click.native="hideMenu">Add words</router-link>
         <router-link class="mdl-navigation__link" to="/login" v-if="!isConnected" @click.native="hideMenu">login</router-link>
-        {{FB}}
-        {{isConnected}}
-        <div class="mdl-navigation__link" v-if="isConnected">로그아웃</div>
+        <div class="mdl-navigation__link" v-if="isConnected" @click="fbLogOut">로그아웃</div>
       </nav>
     </div>
 
@@ -34,14 +32,23 @@ export default {
   name: 'app',
   data () {
     return {
-      isConnected: 'hihi',
-      FB: window.FB
+      isConnected: this.$store.state.isConnected,
+      FB: this.$store.state.FB
     }
   },
   methods: {
     hideMenu: function () {
       document.getElementsByClassName('mdl-layout__drawer')[0].classList.remove('is-visible')
       document.getElementsByClassName('mdl-layout__obfuscator')[0].classList.remove('is-visible')
+    },
+    fbLogOut () {
+      this.FB.logout(function (response) {
+        if (response.status === 'connected') {
+          window.vm.$store.state.isConnected = true
+        } else {
+          window.vm.$store.state.isConnected = false
+        }
+      })
     }
   },
   created () {
@@ -50,14 +57,18 @@ export default {
     FB.init({
       appId            : '693041211036132',
       autoLogAppEvents : true,
-      xfbml            : true,
+      xfbml            : false,
+      cookie           : true,
       version          : 'v2.12'
     });
-    
+    window.vm.$store.state.FB = FB
     FB.getLoginStatus(function(response) {
-      window.vm.$store.state.isConnected = response.status
-      console.log(window.vm.$store.state.isConnected)
-      console.log(response.status);
+      console.log(response)
+      if (response.status === "connected"){
+        window.vm.$store.state.isConnected = true
+      } else {
+        window.vm.$store.state.isConnected = false
+      }
     });
   };
 
@@ -75,6 +86,13 @@ export default {
     },
     (newVal, oldVal) => {
       this.isConnected = newVal
+    })
+
+    this.$store.watch((state) => {
+      return this.$store.state.FB
+    },
+    (newVal, oldVal) => {
+      this.FB = newVal
     })
   }
 }
