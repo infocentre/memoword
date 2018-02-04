@@ -9,8 +9,8 @@ import store from './store'
 Vue.config.productionTip = false
 sync(store, router)
 
-/* eslint-disable no-new */
-new Vue({
+/* eslint-disable */
+window.vm = new Vue({
   el: '#app',
   store,
   router,

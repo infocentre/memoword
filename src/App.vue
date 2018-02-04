@@ -14,6 +14,7 @@
         <router-link class="mdl-navigation__link" to="/add" @click.native="hideMenu">Add words</router-link>
         <router-link class="mdl-navigation__link" to="/login" v-if="!isConnected" @click.native="hideMenu">login</router-link>
         {{FB}}
+        {{isConnected}}
         <div class="mdl-navigation__link" v-if="isConnected">로그아웃</div>
       </nav>
     </div>
@@ -33,7 +34,7 @@ export default {
   name: 'app',
   data () {
     return {
-      isConnected: null,
+      isConnected: 'hihi',
       FB: window.FB
     }
   },
@@ -44,7 +45,31 @@ export default {
     }
   },
   created () {
+    /* eslint-disable */
+    window.fbAsyncInit = function() {
+    FB.init({
+      appId            : '693041211036132',
+      autoLogAppEvents : true,
+      xfbml            : true,
+      version          : 'v2.12'
+    });
     
+    FB.getLoginStatus(function(response) {
+      window.vm.$store.state.isConnected = response.status
+      console.log(window.vm.$store.state.isConnected)
+      console.log(response.status);
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+    
+    /* elint-enable */
     this.$store.watch((state) => {
       return this.$store.state.isConnected
     },
