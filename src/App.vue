@@ -4,6 +4,10 @@
     <header class="mdl-layout__header">
       <div class="mdl-layout__header-row">
         <span class="mdl-layout-title">Memo King</span>
+        <div class="mdl-layout-spacer"></div>
+        <nav class="mdl-navigation">
+          <div class="mdl-navigation__link" ><img v-if="uid" v-bind:src="imgUrl" style="height:50px; border-radius:50%;"></div>
+        </nav>
       </div>
     </header>
 
@@ -13,7 +17,7 @@
         <router-link class="mdl-navigation__link" to="/" @click.native="hideMenu">Home</router-link>
         <router-link class="mdl-navigation__link" to="/add" @click.native="hideMenu">Add words</router-link>
         <router-link class="mdl-navigation__link" to="/login" v-if="!isConnected" @click.native="hideMenu">login</router-link>
-        <div class="mdl-navigation__link" v-if="isConnected" @click="fbLogOut">로그아웃</div>
+        <div class="mdl-navigation__link" v-if="isConnected" @click="fbLogOut">logout</div>
       </nav>
     </div>
 
@@ -33,7 +37,13 @@ export default {
   data () {
     return {
       isConnected: this.$store.state.isConnected,
-      FB: this.$store.state.FB
+      FB: this.$store.state.FB,
+      uid: this.$store.state.uid
+    }
+  },
+  computed: {
+    imgUrl: function () {
+      return 'http://graph.facebook.com/' + this.$store.state.uid + '/picture'
     }
   },
   methods: {
@@ -45,10 +55,14 @@ export default {
       this.FB.logout(function (response) {
         if (response.status === 'connected') {
           window.vm.$store.state.isConnected = true
+          window.vm.$store.state.uid = null
         } else {
           window.vm.$store.state.isConnected = false
+          window.vm.$store.state.uid = null
         }
       })
+      document.getElementsByClassName('mdl-layout__drawer')[0].classList.remove('is-visible')
+      document.getElementsByClassName('mdl-layout__obfuscator')[0].classList.remove('is-visible')
     }
   },
   created () {
@@ -62,10 +76,11 @@ export default {
       version          : 'v2.12'
     });
     window.vm.$store.state.FB = FB
-    FB.getLoginStatus(function(response) {
-      console.log(response)
-      if (response.status === "connected"){
+    FB.getLoginStatus(function(res) {
+      console.log(res)
+      if (res.status === "connected"){
         window.vm.$store.state.isConnected = true
+        window.vm.$store.state.uid = res.authResponse.userID
       } else {
         window.vm.$store.state.isConnected = false
       }
@@ -94,6 +109,14 @@ export default {
     (newVal, oldVal) => {
       this.FB = newVal
     })
+
+    this.$store.watch((state) => {
+      return this.$store.state.uid
+    },
+    (newVal, oldVal) => {
+      this.uid = newVal
+    })
+
   }
 }
 </script>
