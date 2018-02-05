@@ -77,7 +77,6 @@ export default {
     });
     window.vm.$store.state.FB = FB
     FB.getLoginStatus(function(res) {
-      console.log(res)
       if (res.status === "connected"){
         window.vm.$store.state.isConnected = true
         window.vm.$store.state.uid = res.authResponse.userID

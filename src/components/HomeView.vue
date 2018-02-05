@@ -6,7 +6,7 @@
           <h1 @click="playSound">{{words.word}}</h1>
         </div>
         <div>
-          <h2 style='text-align:right;'>{{words.translation}}</h2>
+          <h4 style='text-align:right;'>{{words.translation}}</h4>
         </div>
       </div>
       <div style='text-align:center;'>
@@ -31,6 +31,7 @@ export default {
   },
   methods: {
     randomWord: function () {
+      this.$store.state.words = this.$root.memoword
       let wordsList = this.$store.state.words
       let randomNumber = Math.floor(Math.random() * wordsList.length)
       this.words = wordsList[randomNumber]
@@ -42,6 +43,16 @@ export default {
       this.computerSpeech.lang = 'ko-kr'
       this.synth.speak(this.computerSpeech)
     }
+  },
+  created () {
+    this.$store.watch((state) => {
+      return this.$store.state.words
+    },
+    (newVal, oldVal) => {
+      let wordsList = this.$store.state.words
+      let randomNumber = Math.floor(Math.random() * wordsList.length)
+      this.words = wordsList[randomNumber]
+    })
   },
   mounted () {
     this.randomWord()

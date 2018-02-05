@@ -5,7 +5,9 @@ import App from './App'
 import router from './router'
 import { sync } from 'vuex-router-sync'
 import store from './store'
-
+import Vuefire from 'vuefire'
+import firebase from './service/firebase'
+Vue.use(Vuefire)
 Vue.config.productionTip = false
 sync(store, router)
 
@@ -13,6 +15,9 @@ sync(store, router)
 window.vm = new Vue({
   el: '#app',
   store,
+  firebase: {
+    memoword: firebase.database.ref('memoword').orderByChild('created_at')
+  },
   router,
   template: '<App/>',
   components: { App }
