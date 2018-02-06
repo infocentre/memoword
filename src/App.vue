@@ -30,8 +30,8 @@
 </template>
 
 <script>
+import firebase from './service/firebase'
 require('material-design-lite')
-
 export default {
   name: 'app',
   data () {
@@ -54,9 +54,8 @@ export default {
     fbLogOut () {
       this.FB.logout(function (response) {
         if (response.status === 'connected') {
-          window.vm.$store.state.isConnected = true
-          window.vm.$store.state.uid = null
         } else {
+          firebase.init.auth().signOut()
           window.vm.$store.state.isConnected = false
           window.vm.$store.state.uid = null
         }

@@ -16,9 +16,10 @@ window.vm = new Vue({
   el: '#app',
   store,
   firebase: {
-    memoword: firebase.database.ref('memoword').orderByChild('created_at')
+    memoword: firebase.init.database().ref('memoword').orderByChild('created_at')
   },
   router,
   template: '<App/>',
   components: { App }
 })
+console.log(firebase)

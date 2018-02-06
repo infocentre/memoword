@@ -9,7 +9,6 @@ var config = {
   messagingSenderId: '853445854136'
 }
 firebase.initializeApp(config)
-
 export default {
-  database: firebase.database()
+  init: firebase
 }
