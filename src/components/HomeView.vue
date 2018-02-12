@@ -17,21 +17,29 @@
 </template>
 
 <script>
+import firebase from '../service/firebase'
 export default {
   data () {
     return {
       words: null,
       isLoading: true,
       name: '',
-      selectedVoice: 0,
+      selectedVoice: 1,
       synth: window.speechSynthesis,
       voiceList: [],
+      uid: this.$store.state.uid,
       computerSpeech: new window.SpeechSynthesisUtterance()
     }
   },
   methods: {
     randomWord: function () {
-      this.$store.state.words = this.$root.memoword
+      firebase.init.database().ref('memoword').orderByChild('uid').equalTo(this.uid).on('value', function (snapshot) {
+        var arr1 = []
+        snapshot.forEach(function (data) {
+          arr1.push(data.val())
+        })
+        window.vm.$store.state.words = arr1
+      })
       let wordsList = this.$store.state.words
       let randomNumber = Math.floor(Math.random() * wordsList.length)
       this.words = wordsList[randomNumber]
@@ -40,7 +48,7 @@ export default {
       // it should be 'craic', but it doesn't sound right
       this.computerSpeech.text = this.words.word
       this.computerSpeech.voice = this.voiceList[this.selectedVoice]
-      this.computerSpeech.lang = 'ko-kr'
+      this.computerSpeech.lang = 'en-us'
       this.synth.speak(this.computerSpeech)
     }
   },
@@ -53,9 +61,17 @@ export default {
       let randomNumber = Math.floor(Math.random() * wordsList.length)
       this.words = wordsList[randomNumber]
     })
-  },
-  mounted () {
-    this.randomWord()
+
+    this.$store.watch((state) => {
+      return this.$store.state.uid
+    },
+    (newVal, oldVal) => {
+      this.uid = newVal
+      this.randomWord()
+    })
+    if (this.$store.state.uid) {
+      this.randomWord()
+    }
     // wait for voices to load
     // I can't get FF to work without calling this first
     // Chrome works on the onvoiceschanged function

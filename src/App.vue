@@ -15,6 +15,7 @@
       <span class="mdl-layout-title">Memo King</span>
       <nav class="mdl-navigation">
         <router-link class="mdl-navigation__link" to="/" @click.native="hideMenu">Home</router-link>
+        <router-link class="mdl-navigation__link" to="/list" @click.native="hideMenu">Words List</router-link>
         <router-link class="mdl-navigation__link" to="/add" @click.native="hideMenu">Add words</router-link>
         <router-link class="mdl-navigation__link" to="/login" v-if="!isConnected" @click.native="hideMenu">login</router-link>
         <div class="mdl-navigation__link" v-if="isConnected" @click="fbLogOut">logout</div>
@@ -92,6 +93,7 @@ export default {
      js.src = "https://connect.facebook.net/en_US/sdk.js";
      fjs.parentNode.insertBefore(js, fjs);
    }(document, 'script', 'facebook-jssdk'));
+   
     
     /* elint-enable */
     this.$store.watch((state) => {
@@ -114,7 +116,6 @@ export default {
     (newVal, oldVal) => {
       this.uid = newVal
     })
-
   }
 }
 </script>

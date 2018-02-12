@@ -22,4 +22,3 @@ window.vm = new Vue({
   template: '<App/>',
   components: { App }
 })
-console.log(firebase)

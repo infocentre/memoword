@@ -14,6 +14,7 @@ export default {
   methods: {
     fbLogin () {
       let FB = this.$store.state.FB
+      console.log(firebase.init.auth().currentUser)
       FB.login(function (res) {
         if (res.status === 'connected') {
           /* eslint-disable */
@@ -45,6 +46,7 @@ export default {
               for (var i = 0; i < providerData.length; i++) {
                 if (providerData[i].providerId === firebase.init.auth.FacebookAuthProvider.PROVIDER_ID &&
                     providerData[i].uid === facebookAuthResponse.userID) {
+                     
                   // We don't need to re-auth the Firebase connection.
                   return true;
                 }
