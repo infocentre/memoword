@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div v-for="word in list">
+  <div class="mdl-grid">
+    <div v-for="word in list" v-bind:key="word.id" class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone">
       <input type="text" v-model="word.word" class="wordInput" :class="{showWord:word == editWord && 'wordword'== element}" @blur="changeWordDone(word)" @keyup.enter="changeWordDone(word)">
       <span @dblclick="changeWord(word, $event)" class="wordword">{{word.word}}</span>
       <input type="text" v-model="word.translation" class="wordInput" :class="{showWord:word == editWord && 'tran' == element}" @blur="changeWordDone(word)" @keyup.enter="changeWordDone(word)">
@@ -32,6 +32,7 @@ export default {
   },
   methods: {
     fetchUserWords: function () {
+      var self = this
       firebase.init.database().ref('memoword').orderByChild('uid').equalTo(this.uid).on('value', function (snapshot) {
         var arr = []
         snapshot.forEach(function (data) {
@@ -40,6 +41,8 @@ export default {
           arr.push(dataToPush)
         })
         window.vm.$store.state.list = arr
+        self.list = arr
+        console.log(arr)
       })
     },
     changeWord: function (word, event) {
