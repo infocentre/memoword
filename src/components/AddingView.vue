@@ -2,11 +2,13 @@
   <div class="mdl-grid">
     <div>{{uid}}</div>
     <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone">
-      <p>word</p>
+      <p>word</p> 
+      <button style="display:inline" @click="SearchWord">search</button>
       <input type="text" class="mdl-textfield__input" v-model="newWord">
     </div>
+      
     <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone">
-      <p>meaning</p>
+      <p>meaning</p> {{searchedWord}}
       <input type="texdt" class="mdl-textfield__input" v-model="newMeaning">
     </div>
     <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone">
@@ -23,12 +25,14 @@
 
 <script>
 // import firebase from '../service/firebase'
+import axios from 'axios'
 export default {
   data () {
     return {
       newWord: null,
       newMeaning: null,
-      uid: this.$store.state.uid
+      uid: this.$store.state.uid,
+      searchedWord: null
     }
   },
   methods: {
@@ -45,7 +49,19 @@ export default {
         console.log('단어저장 완료')
       })
     },
-    getWords () {
+    SearchWord () {
+      console.log(this.newWord)
+      axios.get(`https://us-central1-test-68c08.cloudfunctions.net/GetDict?word=` + this.newWord.toLowerCase()).then(
+        response => {
+          // JSON responses are automatically parsed.
+          var obj = JSON.parse(response.data)
+          this.searchedWord = obj['tuc'][0]['phrase']['text']
+          console.log(obj['tuc'][0]['phrase']['text'])
+          // this.posts = response.data
+        })
+        .catch(e => {
+          // this.errors.push(e)
+        })
     }
   },
   created () {
@@ -54,9 +70,6 @@ export default {
     }, (newVal, oldVal) => {
       this.firebaseUser = newVal
     })
-  },
-  mounted () {
-    this.getWords()
   }
 }
 </script>
